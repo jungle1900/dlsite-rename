@@ -1,0 +1,13 @@
+# 處理 from_dir 裡的檔案與資料夾，並移動到 to_dir
+from_dir: 'D:/workspace'
+to_dir: 'D:/workspace/done'
+
+# 可用的關鍵字 code, title, maker
+name_format: "[{maker}_{code}] {title}"
+
+# 是否只處理資料夾
+only_dir: true
+
+# 是否下載封面，以及檔案名稱
+download_cover: true
+cover_filename: "cover"
