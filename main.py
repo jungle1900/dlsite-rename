@@ -55,14 +55,20 @@ def main():
 
         file = file.rename(to_dir / build_filename(code, title, maker))
 
+        if conf['create_shortcut'] and file.is_dir():
+            try:
+                dlsite.create_shortcut(file, code)
+            except Exception as e:
+                print('建立捷徑失敗：' + e)
+
         if conf['download_cover'] and file.is_dir():
             try:
-                dlsite.download_image(image, file)
+                dlsite.download_image(file, image)
             except Exception as e:
                 print('下載圖片失敗：' + e)
 
         print('完成')
-        sleep(0.3)
+        sleep(0.2)
 
 
 if __name__ == "__main__":

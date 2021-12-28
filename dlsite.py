@@ -11,13 +11,13 @@ MIME_TYPES = {
 }
 
 USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.55 Safari/537.36 Edg/96.0.1054.41'
-WEB_PATH = 'https://www.dlsite.com/maniax/work/=/product_id/'
+WEB_PATH = 'https://www.dlsite.com/maniax/work/=/product_id/{code}.html'
 
 s = requests.session()
 
 
 def get_product_data(code):
-    res = s.get(WEB_PATH + code, headers={'user-agent': USER_AGENT})
+    res = s.get(WEB_PATH.format(code=code), headers={'user-agent': USER_AGENT})
     if res.status_code != 200:
         raise RuntimeError(res.status_code, res.content)
 
@@ -29,7 +29,15 @@ def get_product_data(code):
     return code, title, maker, image
 
 
-def download_image(url, save_path):
+def create_shortcut(save_path, code):
+    file_path = f'{save_path}/{conf["shortcut_filename"]}.url'
+
+    with open(file_path, 'w') as file:
+        file.write('[InternetShortcut]\nURL=')
+        file.write(WEB_PATH.format(code=code))
+
+
+def download_image(save_path, url):
     if url.startswith('//'):
         url = 'https:' + url
 
