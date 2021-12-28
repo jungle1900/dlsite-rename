@@ -8,6 +8,10 @@ name_format: "[{maker}_{code}] {title}"
 # 是否只處理資料夾
 only_dir: true
 
-# 是否下載封面，以及檔案名稱
+# 是否建立 dlsite 捷徑
+create_shortcut: true
+shortcut_filename: "dlsite"
+
+# 是否下載封面
 download_cover: true
 cover_filename: "cover"
