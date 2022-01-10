@@ -19,7 +19,7 @@ s = requests.session()
 def get_product_data(code):
     res = s.get(WEB_PATH.format(code=code), headers={'user-agent': USER_AGENT})
     if res.status_code != 200:
-        raise RuntimeError(res.status_code, res.content)
+        raise RuntimeError(f'access {res.url} error, status code: {res.status_code}')
 
     soup = BeautifulSoup(res.content, 'html.parser')
     title = soup.select_one('#work_name').string
@@ -43,7 +43,7 @@ def download_image(save_path, url):
 
     res = s.get(url, stream=True)
     if res.status_code != 200:
-        raise RuntimeError(res.status_code, res.content)
+        raise RuntimeError(f'access {res.url} error, status code: {res.status_code}')
 
     extension = MIME_TYPES[res.headers['content-type']]
     file_path = f'{save_path}/{conf["cover_filename"]}.{extension}'

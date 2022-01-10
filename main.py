@@ -1,4 +1,6 @@
 import re
+import logging
+from datetime import datetime
 from time import sleep
 from pathlib import Path
 from config import conf
@@ -29,6 +31,14 @@ def build_filename(code, title, maker):
 
 
 def main():
+    logging.basicConfig(
+        filename='error.log',
+        format='%(asctime)s | %(name)s | %(levelname)s | %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S',
+        encoding='utf-8',
+        level=logging.ERROR,
+    )
+
     from_dir = Path(conf['from_dir'].rstrip('/'))
     if not from_dir.is_dir():
         print('from_dir 資料夾不存在')
@@ -51,24 +61,32 @@ def main():
         try:
             code, title, maker, image = dlsite.get_product_data(code)
         except Exception as e:
-            print('訪問 DLsite 失敗：' + e)
-
-        file = file.rename(to_dir / build_filename(code, title, maker))
+            print('訪問 DLsite 失敗，略過此作品')
+            logging.error(e)
+            continue
 
         if conf['create_shortcut'] and file.is_dir():
             try:
                 dlsite.create_shortcut(file, code)
             except Exception as e:
-                print('建立捷徑失敗：' + e)
+                print('建立捷徑失敗，略過此作品')
+                logging.error(e)
+                continue
 
         if conf['download_cover'] and file.is_dir():
             try:
                 dlsite.download_image(file, image)
             except Exception as e:
-                print('下載圖片失敗：' + e)
+                print('下載封面失敗，略過此作品')
+                logging.error(e)
+                continue
 
-        print('完成')
+        file.rename(to_dir / build_filename(code, title, maker))
+
+        print('成功')
         sleep(0.2)
+
+    input('處理完畢，按下 enter 退出')
 
 
 if __name__ == "__main__":
