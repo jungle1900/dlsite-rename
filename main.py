@@ -21,6 +21,14 @@ def get_files(path):
     return files
 
 
+def replace_filename(path, from_ext, to_ext):
+    for file in path.glob('**/*' + from_ext):
+        try:
+            file.rename(str(file).replace(from_ext, to_ext))
+        except Exception as e:
+            log.error(f'重命名 {file} 失敗: {e}')
+
+
 def build_filename(code, title, maker):
     title = TITLE_SUB_PATTERN.sub('', title)
     title = title.translate(WINDOWS_REPLACE_TABLE)
@@ -58,11 +66,14 @@ def main():
         code = match.group().upper()
         print(f'處理 {code} 中...', end='')
 
+        for pattern in conf['replace_filename_patterns']:
+            replace_filename(file, pattern['from'], pattern['to'])
+
         try:
             code, title, maker, image = dlsite.get_product_data(code)
         except Exception as e:
             print('訪問 DLsite 失敗，略過此作品')
-            log.error(e)
+            log.error(f'訪問 DLsite 失敗: {e}')
             continue
 
         if conf['create_shortcut'] and file.is_dir():
@@ -70,7 +81,7 @@ def main():
                 dlsite.create_shortcut(file, code)
             except Exception as e:
                 print('建立捷徑失敗，略過此作品')
-                log.error(e)
+                log.error(f'建立捷徑失敗: {e}')
                 continue
 
         if conf['download_cover'] and file.is_dir():
@@ -78,10 +89,15 @@ def main():
                 dlsite.download_image(file, image)
             except Exception as e:
                 print('下載封面失敗，略過此作品')
-                log.error(e)
+                log.error(f'下載封面失敗: {e}')
                 continue
 
-        file.rename(to_path / build_filename(code, title, maker))
+        try:
+            file.rename(to_path / build_filename(code, title, maker))
+        except Exception as e:
+            print('移動檔案失敗，略過此作品')
+            log.error(f'移動檔案失敗: {e}')
+            continue
 
         print('成功')
         sleep(0.2)

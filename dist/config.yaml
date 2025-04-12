@@ -15,3 +15,18 @@ shortcut_filename: "dlsite"
 # 是否下載封面
 download_cover: true
 cover_filename: "cover"
+
+# 替換檔案名稱
+replace_filename_patterns:
+- from: ".wav.vtt"
+  to: ".vtt"
+- from: ".wav.srt"
+  to: ".srt"
+- from: ".flac.vtt"
+  to: ".vtt"
+- from: ".flac.srt"
+  to: ".srt"
+- from: ".mp3.vtt"
+  to: ".vtt"
+- from: ".mp3.srt"
+  to: ".srt"
